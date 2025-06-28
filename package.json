@@ -1,0 +1,34 @@
+{
+  "name": "bazarya-api-server",
+  "version": "1.0.0",
+  "description": "This is the **backend API** for a multi-vendor e-commerce platform that connects small businesses and customers in a digital marketplace.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "compression": "^1.8.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "express-session": "^1.18.1",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mime-types": "^3.0.1",
+    "mongoose": "^8.16.1",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.3",
+    "parse-error": "^0.2.0",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  }
+}
