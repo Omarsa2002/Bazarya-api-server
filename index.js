@@ -27,7 +27,7 @@ app.use(helmet());
 //------------------
 
 //Database connection
-//connectiondb()
+connectiondb()
 
 console.log("Environment:", CONFIG.ENV)
 app.set("trust proxy", true);
@@ -116,11 +116,11 @@ app.use(function(err, req, res, next) {
     });
 });
 
-app.listen(CONFIG.port, err => {
+app.listen(CONFIG.PORT, err => {
     if (err) {
         return console.log('something bad happened', err);
     }
-    console.log('Bazarya API Server is listening on %s', CONFIG.port);
+    console.log('Bazarya API Server is listening on %s', CONFIG.PORT);
 });
 
 
