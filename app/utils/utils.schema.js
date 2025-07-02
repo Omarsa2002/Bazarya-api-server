@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const VideoSchema = new Schema({
     description: String,
-    videoLink: String
+    videoLink: String,
+    videoId: String
 }, { _id: false });
 // module.exports.Video = mongoose.model("Video", VideoSchema);
 module.exports.VideoSchema = VideoSchema;
@@ -18,7 +19,8 @@ module.exports.SeoTagSchema = SeoTagSchema;
 const ImageSchema = new Schema({
     caption: String,
     imageURL: String,
-    imageName: String
+    imageName: String,
+    imageId: String
 }, { _id: false });
 // module.exports.Image = mongoose.model("Image", ImageSchema);
 module.exports.ImageSchema = ImageSchema;
@@ -26,7 +28,8 @@ module.exports.ImageSchema = ImageSchema;
 const pdfSchema = new Schema({
     caption: String,
     pdfURL: String,
-    pdfName: String
+    pdfName: String,
+    pdfId: String
 }, { _id: false });
 // module.exports.Image = mongoose.model("Image", ImageSchema);
 module.exports.pdfSchema = pdfSchema;

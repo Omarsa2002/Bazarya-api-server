@@ -13,6 +13,7 @@ var LOG = require('./config/logger');
 const CONFIG = require('./config/config');
 const routes = require('./app/routes-index');
 const { connectiondb } = require('./app/db/connectiondb.js');
+require('./app/utils/passport.js');
 //const { limit } = require('./app/utils/util.service.js');
 
 app.use(morgan('combined', { stream: LOG.stream }));
@@ -22,12 +23,13 @@ app.use(cookieParser());
 app.use(compression);
 app.use(helmet());
 
-//Passport
-
-//------------------
-
 //Database connection
 connectiondb()
+
+//Passport
+app.use(require('passport').initialize());
+//------------------
+
 
 console.log("Environment:", CONFIG.ENV)
 app.set("trust proxy", true);
