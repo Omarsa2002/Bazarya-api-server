@@ -19,7 +19,7 @@ const userSchema=new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    verificationCode:Number,
+    verificationCode:String,
     verificationCodeDate:Date,
     recoveryCode: String,
     recoveryCodeDate: Date,

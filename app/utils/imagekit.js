@@ -7,4 +7,4 @@ let imageKit = new ImageKit({
     urlEndpoint: CONFIG.IMAGEKIT_ENDPOINT,
 });
 
-module.exports.imageKit=imageKit
+module.exports = {imageKit}

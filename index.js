@@ -20,7 +20,7 @@ app.use(morgan('combined', { stream: LOG.stream }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(compression);
+app.use(compression());
 app.use(helmet());
 
 //Database connection
@@ -39,6 +39,7 @@ const whitelist = [CONFIG.CLINT_ORIGIN]
 
 const allowedOrigin = (origin, callback)=>{
     console.log("origin------>",origin, whitelist, whitelist.includes(origin)); 
+    if (!origin && CONFIG.ENV === 'dev') return callback(null, true);
     if (whitelist.includes(origin)){
         return callback(null, true)
     }
@@ -63,10 +64,15 @@ app.use(function(req, res, next) {
     const contentType = req.headers['content-type'];
     const path = req.path;
     console.log(path);
+    // Skip validation for GET requests (they don't have body)
+    if (method === 'GET' || method === 'DELETE') {
+        return next();
+    }
     // Paths that use form-data (file uploads), using regex to handle dynamic productId
     const formDataPaths = [
         '/common/uploadFile',
-        ///^\/api\/v1\/product\/updateproduct\/[^\/]+$/  // Regex to match '/api/v1/'
+        /^\/api\/v1\/auth\/signup-shop$/  // Regex to match '/api/v1/.../....'
+        ///^\/api\/v1\/auth\/signup-shop\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
     ];
     // Check if the path matches any form-data path
     const isFormDataPath = formDataPaths.some((formDataPath) => {
@@ -78,12 +84,18 @@ app.use(function(req, res, next) {
     if (!isFormDataPath && contentType !== 'application/json') {
         res.status(415).json({
             error: 'Unsupported Content-Type. Only application/json is allowed for this path.',
-            success: false
+            success: false,
+            path: path,
+            expectedContentType: 'application/json',
+            receivedContentType: contentType
         });
     } else if (isFormDataPath && contentType.indexOf('multipart/form-data') === -1) {
         res.status(415).json({
             error: 'Unsupported Content-Type. Only multipart/form-data is allowed for file uploads.',
-            success: false
+            success: false,
+            path: path,
+            expectedContentType: 'multipart/form-data',
+            receivedContentType: contentType
         });
     } else {
         next();
@@ -92,8 +104,12 @@ app.use(function(req, res, next) {
 
 routes.v1routes(app)
 
-app.use('/', function(req, res){
-	res.status(400).json({message:"Bazarya API Server"})
+app.get('/', function(req, res){
+	res.status(200).json({
+        message:"Bazarya API Server",
+        status: "running",
+        timestamp: new Date().toISOString()
+    })
 });
 
 // catch 404 and forward to error handler

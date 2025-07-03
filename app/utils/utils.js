@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const csvtojson = require('csvtojson/v2')
+//const csvtojson = require('csvtojson/v2')
 
 const MomentRange = require('moment-range');
 const Moment = require('moment');
@@ -7,9 +7,34 @@ const moment = MomentRange.extendMoment(Moment);
 const { v4: uuidv4 } = require("uuid");
 
 const fs = require('fs');
-const { cloudinary } = require('./cloudinary.js');
+//const { cloudinary } = require('./cloudinary.js');
 
-const imageKit = require('./imagekit.js');
+const {imageKit} = require('./imagekit.js');
+
+function validateAndFormatFolder(folder) {
+    // If no folder provided, use root
+    if (!folder || folder.trim() === '') {
+        return '/';
+    }
+    
+    // Replace spaces with underscores, keep other valid characters
+    let cleanFolder = folder.replace(/ /g, '_');
+    
+    // Ensure folder starts with /
+    if (!cleanFolder.startsWith('/')) {
+        cleanFolder = '/' + cleanFolder;
+    }
+    
+    // Ensure folder ends with / (ImageKit requirement)
+    if (!cleanFolder.endsWith('/')) {
+        cleanFolder = cleanFolder + '/';
+    }
+    
+    // Remove double slashes
+    cleanFolder = cleanFolder.replace(/\/+/g, '/');
+    
+    return cleanFolder;
+}
 
 /**
  * Uploads a file to ImageKit.io.
@@ -19,6 +44,7 @@ const imageKit = require('./imagekit.js');
  */
 async function uploadFileToImageKit(fileBuffer, fileName, folder = "/") {
     try {
+        folder = validateAndFormatFolder(folder);
         const result = await imageKit.upload({
             file: fileBuffer,             // Required: The actual file content (buffer, base64, or URL)
             fileName: fileName,           // Required: The name the file will have in ImageKit
@@ -250,7 +276,7 @@ module.exports = {
     compressImage, 
     getDate, 
     currentDate,
-    uploadImageToCloudinary,
-    replaceImage
+    //uploadImageToCloudinary,
+    //replaceImage
 }
 
