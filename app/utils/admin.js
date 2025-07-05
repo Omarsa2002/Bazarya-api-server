@@ -1,16 +1,15 @@
 const { v4: uuidv4 } = require("uuid");
-var bcrypt = require('bcryptjs');
-const CONFIG = require("../../config/config.js");
+
 const userModel = require("../db/models/user.schema.js");
 
 
 
 const admin={
-    userId:"admin"+uuidv4(),
+    userId:"Admin"+uuidv4(),
     userName:"Abdullah Ahmed",
-    email:`abdullahahmed02000${uuidv4()}@gmail.com`,
+    email:`omersa2002${uuidv4()}@gmail.com`,
     phone:"01090524452",
-    password:"abdullah@123",
+    password:"Omar@123",
     role:"admin",
     activateEmail:true,
     gender:"male"

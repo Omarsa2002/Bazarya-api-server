@@ -7,6 +7,8 @@ const addPrefixedIdPlugin = require("../db.helper.js");
 const userSchema=new mongoose.Schema({
     userId:String,
     userName:String,
+    fName:String,
+    lName:String,
     encryptedPassword:String,
     phone: String,
     profileImage: ImageSchema,
@@ -30,7 +32,7 @@ const userSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum: ['user', 'admin', 'vendor'],
+        enum: ['user', 'admin'],
         default:"user"
     },
     address: AddressSchema,

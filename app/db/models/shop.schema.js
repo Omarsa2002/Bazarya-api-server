@@ -32,6 +32,7 @@ const shopSchema=new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    reasonIfRejected:String,
     deliveryAvailable: {
         type: Boolean,
         default: false,

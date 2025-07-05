@@ -150,14 +150,16 @@ const loginShop = async ( req, res, next ) => {
 //.......................signUp.........................\\
 const signUpUser=async(req,res,next)=>{
     try {
-        const {userName, email, password}=req.body;
+        const {fName, lName, email, password}=req.body;
         const user = await userModel.findOne({email});           
         if(user){            
             sendResponse(res,constants.RESPONSE_BAD_REQUEST,"email already exist",{},[])
         }
         else{
             const newUser=new userModel({
-                userName,
+                fName,
+                lName,
+                userName: fName+" "+lName,
                 email,
                 password,
                 verificationCode:randomNumber(),

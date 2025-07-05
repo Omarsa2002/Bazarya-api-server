@@ -118,13 +118,25 @@ const signUpShop={
 
 const signUpUser={
     body:joi.object().required().keys({
-        userName: joi.string()
+        fName: joi.string()
         .required()
         .min(3)
+        .max(25)
         .messages({
-            'string.base': 'Username must be a string.',
-            'string.empty': 'Username is required.',
-            'string.min': 'Username must be at least 3 characters long.',
+            'string.base': 'first name must be a string.',
+            'string.empty': 'first name is required.',
+            'string.min': 'first name must be at least 3 characters long.',
+            'string.max': 'first name must be at most 25 characters long.',
+        }),
+        lName: joi.string()
+        .required()
+        .min(3)
+        .max(25)
+        .messages({
+            'string.base': 'last name must be a string.',
+            'string.empty': 'last name is required.',
+            'string.min': 'last name must be at least 3 characters long.',
+            'string.max': 'last name must be at most 25 characters long.',
         }),
     email: joi.string()
         .email()

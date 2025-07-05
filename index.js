@@ -14,6 +14,7 @@ const CONFIG = require('./config/config');
 const routes = require('./app/routes-index');
 const { connectiondb } = require('./app/db/connectiondb.js');
 require('./app/utils/passport.js');
+//const {addAdmin} = require('./app/utils/admin.js');
 //const { limit } = require('./app/utils/util.service.js');
 
 app.use(morgan('combined', { stream: LOG.stream }));
@@ -71,8 +72,9 @@ app.use(function(req, res, next) {
     // Paths that use form-data (file uploads), using regex to handle dynamic productId
     const formDataPaths = [
         '/common/uploadFile',
-        /^\/api\/v1\/auth\/signup-shop$/  // Regex to match '/api/v1/.../....'
-        ///^\/api\/v1\/auth\/signup-shop\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
+        /^\/api\/v1\/auth\/signup-shop$/,  // Regex to match '/api/v1/.../....'
+        /^\/api\/v1\/shop\/update-shop$/,  // Regex to match '/api/v1/.../....'
+        ///^\/api\/v1\/shop\/update-shop\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
     ];
     // Check if the path matches any form-data path
     const isFormDataPath = formDataPaths.some((formDataPath) => {
