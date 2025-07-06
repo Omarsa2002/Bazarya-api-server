@@ -123,15 +123,44 @@ function updateFileDetailsInImageKit(fileId, updates) {
  */
 async function replaceFileByDeleteAndUpload(oldFileId, newFileBuffer, newFileName, newFolder = "/") {
     try {
-        // 1. Delete the old file
-        await new Promise((resolve, reject) => {
-            imageKit.deleteFile(oldFileId, (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            });
-        });
-        console.log(`Old file (ID: ${oldFileId}) deleted.`);
-
+        let deletionResult = null;
+        if (oldFileId && oldFileId.trim() !== '') {
+            try {
+                // First, check if the file exists
+                const fileExists = await new Promise((resolve, reject) => {
+                    imageKit.getFileDetails(oldFileId, (error, result) => {
+                        if (error) {
+                            // If error code indicates file not found, resolve as false
+                            if (error.message && error.message.includes('file not found')) {
+                                resolve(false);
+                            } else {
+                                reject(error);
+                            }
+                        } else {
+                            resolve(true);
+                        }
+                    });
+                });
+                if (fileExists) {
+                    // Delete the old file
+                    deletionResult = await new Promise((resolve, reject) => {
+                        imageKit.deleteFile(oldFileId, (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        });
+                    });
+                    console.log(`Old file (ID: ${oldFileId}) deleted successfully.`);
+                } else {
+                    console.log(`Old file (ID: ${oldFileId}) does not exist, skipping deletion.`);
+                }
+            } catch (deleteError) {
+                console.warn(`Failed to delete old file (ID: ${oldFileId}):`, deleteError.message);
+                // Continue with upload even if deletion fails
+                // You might want to throw here depending on your requirements
+            }
+        } else {
+            console.log("No old file ID provided, skipping deletion.");
+        }
         // 2. Upload the new file (reusing the uploadFileToImageKit function from earlier)
         const uploadResult = await uploadFileToImageKit(newFileBuffer, newFileName, newFolder);
         console.log("New file uploaded successfully:", uploadResult.url);

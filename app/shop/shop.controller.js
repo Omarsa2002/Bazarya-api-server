@@ -59,7 +59,7 @@ const updateShop = async (req, res, next) => {
         if(req.body.deliveryAvailable){
             shop.deliveryAvailable = req.body.deliveryAvailable;
         }
-        if(req.files['businessLicenseImage'][0]){
+        if(req.files&&req.files['businessLicenseImage']){
             if(!shop.businessLicenseImage.pdfId){
                 const result = await utils.uploadFileToImageKit(req.files['businessLicenseImage'][0].buffer,'business_License_Image',`/Bazarya/Shops/${shop.shopName}/files/business_License_Image/`)
                 shop.addBusinessLicenseImage(result);
@@ -67,8 +67,8 @@ const updateShop = async (req, res, next) => {
                 return sendResponse(res, constants.RESPONSE_FORBIDDEN, "you are not allowed to change this file", {}, []);
             }
         }
-        if(req.files['profileImage'][0]){
-            const result = await utils.replaceFileByDeleteAndUpload(shop.profileImage.imageId, req.files['profileImage'][0].buffer, 'profile_Image', `/Bazarya/Shops/${shop.shopName}/files/profile_Image/`)
+        if(req.files&&req.files['profileImage']){
+            const result = await utils.replaceFileByDeleteAndUpload(shop.profileImage.imageId, req.files['profileImage'][0].buffer, 'profile_Image', `/Bazarya/Shops/${shop.shopName}/images/profile-Image/`)
             shop.addProfileImage(result);
         }
         await shop.save();

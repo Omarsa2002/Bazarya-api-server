@@ -21,7 +21,7 @@ const acceptShop = async (req, res, next)=>{
         if(accepted){
             const shop = await shopModel.findOneAndUpdate(
                 {shopId}, 
-                {$set:{checkedShop: true, status: "accepted", reasonIfRejected: null, verifiedAt:currentDate(Date.now())}},
+                {$set:{checkedShop: true, status: "active", reasonIfRejected: null, verifiedAt:currentDate(Date.now())}},
                 {new:true}
             );
             if(shop){

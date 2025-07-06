@@ -141,7 +141,6 @@ shopSchema.methods.addProfileImage = function(result) {
     this.profileImage.imageId = result.fileId;
     this.profileImage.imageURL = result.url;
     this.profileImage.imageName = result.name;
-    
     return this;
 };
 
