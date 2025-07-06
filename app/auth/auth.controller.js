@@ -33,11 +33,12 @@ const chcekEmail = async (email, isUser) => {
 
 //--------shop--------\\
 const signUpShop = async ( req, res, next ) => {
+    let uploadedFiles = [];
     try {
         const {shopName, email, password, ownerFullName, phone, address}=req.body;
         const shop = await shopModel.findOne({email});           
         if(shop){            
-            sendResponse(res,constants.RESPONSE_BAD_REQUEST,"email already exist",{},[])
+            return sendResponse(res,constants.RESPONSE_BAD_REQUEST,"email already exist",{},[])
         }
         else{
             const newShop=new shopModel({
@@ -59,22 +60,17 @@ const signUpShop = async ( req, res, next ) => {
                 const profileImage = req.files['profileImage'][0];
 
                 const result1 = await utils.uploadFileToImageKit(ownerNationalIdImage.buffer, "owner_National_Id_Image", `/Bazarya/Shops/${newShop.shopName}/files/owner_National_Id_Image/`);
+                uploadedFiles.push(result1.fileId);
                 const result2 = await utils.uploadFileToImageKit(selfieWithId.buffer, "selfie_With_Id", `/Bazarya/Shops/${newShop.shopName}/images/selfie_With_Id/`);
+                uploadedFiles.push(result2.fileId);
                 const result3 = await utils.uploadFileToImageKit(profileImage.buffer, "profile_Image", `/Bazarya/Shops/${newShop.shopName}/images/profile-Image/`);
-                newShop.profileImage = {
-                    imageId: result3.fileId,
-                    imageURL: result3.url,
-                    imageName: result3.name
-                }
-                newShop.selfieWithId = {
-                    imageId: result2.fileId,
-                    imageURL: result2.url,
-                    imageName: result2.name
-                }
-                newShop.ownerNationalIdImage = {
-                    pdfId: result1.fileId,
-                    pdfURL: result1.url,
-                    pdfName: result1.name
+                uploadedFiles.push(result3.fileId);
+                try {
+                    newShop.addOwnerNationalIdImage(result1);
+                    newShop.addSelfieWithId(result2);
+                    newShop.addProfileImage(result3);
+                } catch (methodError) {
+                    return sendResponse(res, constants.RESPONSE_INT_SERVER_ERROR, "Error adding images: " + methodError.message, {}, []);
                 }
             }
             const subject="Confirmation Email Send From Bazarya Application";
@@ -97,6 +93,13 @@ const signUpShop = async ( req, res, next ) => {
             }
         }
     } catch (error) {
+        for (const fileId of uploadedFiles) {
+            try {
+                utils.deleteFileFromImageKit(fileId);
+            } catch (deleteError) {
+                console.error('Failed to delete file:', fileId, deleteError);
+            }
+        }
         sendResponse(res,constants.RESPONSE_INT_SERVER_ERROR,error.message,{},constants.UNHANDLED_ERROR);
     }
 }

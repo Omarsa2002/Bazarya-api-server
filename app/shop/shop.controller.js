@@ -32,7 +32,7 @@ const getShop = async (req, res, next) => {
     }
 }
 
-const upateShop = async (req, res, next) => {
+const updateShop = async (req, res, next) => {
     try{
         const { shopId } = req.user;
         const shop = await shopModel.findOne({shopId});
@@ -41,7 +41,7 @@ const upateShop = async (req, res, next) => {
             shop.checkedShop = false;
         }
         if(req.body.description){
-            shop.description = req.shop.description
+            shop.description = req.body.description
         }
         if(req.body.categories){
             req.body.categories.forEach(category => {
@@ -61,19 +61,15 @@ const upateShop = async (req, res, next) => {
         }
         if(req.files['businessLicenseImage'][0]){
             if(!shop.businessLicenseImage.pdfId){
-                const result = await utils.uploadFileToImageKit(req.files['businessLicenseImage'][0].buffer,'business_License_Image',`/Bazarya/Shops/${newShop.shopName}/files/business_License_Image/`)
-                shop.businessLicenseImage.pdfId = result.fileId;
-                shop.businessLicenseImage.pdfName = result.name;
-                shop.businessLicenseImage.pdfURL = result.url;
+                const result = await utils.uploadFileToImageKit(req.files['businessLicenseImage'][0].buffer,'business_License_Image',`/Bazarya/Shops/${shop.shopName}/files/business_License_Image/`)
+                shop.addBusinessLicenseImage(result);
             }else{
                 return sendResponse(res, constants.RESPONSE_FORBIDDEN, "you are not allowed to change this file", {}, []);
             }
         }
         if(req.files['profileImage'][0]){
-            const result = await utils.replaceFileByDeleteAndUpload(shop.profileImage.imageId, req.files['profileImage'][0].buffer, 'profile_Image', `/Bazarya/Shops/${newShop.shopName}/files/profile_Image/`)
-            shop.profileImage.imageId = result.fileId;
-            shop.profileImage.imageName = result.name;
-            shop.profileImage.imageURL = result.url;
+            const result = await utils.replaceFileByDeleteAndUpload(shop.profileImage.imageId, req.files['profileImage'][0].buffer, 'profile_Image', `/Bazarya/Shops/${shop.shopName}/files/profile_Image/`)
+            shop.addProfileImage(result);
         }
         await shop.save();
         sendResponse(res, constants.RESPONSE_SUCCESS, "your data updated", {}, []);
@@ -90,6 +86,14 @@ const add = async (req, res, next) => {
     }
 }
 
+const deleteShop = async (req, res, next) => {
+    try{
+        const { shopId } = req.params
+    }catch(error){
+        sendResponse(res,constants.RESPONSE_INT_SERVER_ERROR,error.message,"", constants.UNHANDLED_ERROR);
+    }
+}
+
 
 
 
@@ -98,5 +102,6 @@ const add = async (req, res, next) => {
 module.exports={
     getAllShops,
     getShop,
-    upateShop
+    updateShop,
+    deleteShop
 }

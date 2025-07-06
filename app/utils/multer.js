@@ -65,7 +65,6 @@ const validateFileTypes = async (req, res, next) => {
         if (!req.files) {
             return next();
         }
-
         // Validate each uploaded file using magic bytes
         for (const fieldName in req.files) {
             const files = req.files[fieldName];
@@ -74,7 +73,6 @@ const validateFileTypes = async (req, res, next) => {
                 if (!file.buffer || file.buffer.length === 0) {
                     return sendResponse(res, RESPONSE_BAD_REQUEST, `File ${file.originalname} is empty`, {}, []);
                 }
-
                 try {
                     // Use magic bytes to detect real file type
                     const detected = await fileType.fileTypeFromBuffer(file.buffer);
@@ -82,35 +80,29 @@ const validateFileTypes = async (req, res, next) => {
                     if (!detected) {
                         return sendResponse(res, RESPONSE_BAD_REQUEST, `Cannot determine file type for ${file.originalname}`, {}, []);
                     }
-
                     const realMimeType = detected.mime;
                     console.log(`File ${file.originalname}: Real type = ${realMimeType}, Client type = ${file.mimetype}`);
-
                     // Validate against allowed types
                     const isValidImage = imageMimeTypes.includes(realMimeType);
                     const isValidFile = fileMimeTypes.includes(realMimeType);
                     const isValidVideo = videosMimeTypes.includes(realMimeType);
-
                     if (!isValidImage && !isValidFile && !isValidVideo) {
                         return sendResponse(res, RESPONSE_BAD_REQUEST, 
                             `Invalid file type for ${file.originalname}. Detected: ${realMimeType}. Only images, PDFs, and documents are allowed.`, 
                             {}, []
                         );
                     }
-
                     // Optional: Check if client-provided mimetype matches real mimetype
                     if (file.mimetype !== realMimeType) {
                         console.warn(`Mimetype mismatch for ${file.originalname}: Client=${file.mimetype}, Real=${realMimeType}`);
                         // You can choose to reject or just log the warning
                     }
-
                 } catch (typeError) {
                     console.error('File type detection error:', typeError);
                     return sendResponse(res, RESPONSE_BAD_REQUEST, `Error validating file ${file.originalname}`, {}, []);
                 }
             }
         }
-
         next();
     } catch (error) {
         console.error('File validation error:', error);

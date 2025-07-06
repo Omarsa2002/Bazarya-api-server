@@ -91,6 +91,61 @@ shopSchema.methods.comparePassword = function(password) {
     return bcrypt.compareSync(password, this.encryptedPassword);
 };
 
+
+shopSchema.methods.addOwnerNationalIdImage = function(result) {
+    if (!result || !result.fileId || !result.url || !result.name) {
+        throw new Error('Invalid result object for owner national ID image');
+    }
+    if (!this.ownerNationalIdImage) {
+        this.ownerNationalIdImage = {};
+    }
+    this.ownerNationalIdImage.pdfId = result.fileId;
+    this.ownerNationalIdImage.pdfURL = result.url;
+    this.ownerNationalIdImage.pdfName = result.name;
+    return this;
+};
+
+shopSchema.methods.addBusinessLicenseImage = function(result) {
+    if (!result || !result.fileId || !result.url || !result.name) {
+        throw new Error('Invalid result object for owner national ID image');
+    }
+    if (!this.businessLicenseImage) {
+        this.businessLicenseImage = {};
+    }
+    this.businessLicenseImage.pdfId = result.fileId;
+    this.businessLicenseImage.pdfURL = result.url;
+    this.businessLicenseImage.pdfName = result.name;
+    return this;
+};
+
+shopSchema.methods.addSelfieWithId = function(result) {
+    if (!result || !result.fileId || !result.url || !result.name) {
+        throw new Error('Invalid result object for selfie with ID');
+    }
+    if (!this.selfieWithId) {
+        this.selfieWithId = {};
+    }
+    this.selfieWithId.imageId = result.fileId;
+    this.selfieWithId.imageURL = result.url;
+    this.selfieWithId.imageName = result.name;
+    return this;
+};
+
+shopSchema.methods.addProfileImage = function(result) {
+    if (!result || !result.fileId || !result.url || !result.name) {
+        throw new Error('Invalid result object for profile image');
+    }
+    if (!this.profileImage) {
+        this.profileImage = {};
+    }
+    this.profileImage.imageId = result.fileId;
+    this.profileImage.imageURL = result.url;
+    this.profileImage.imageName = result.name;
+    
+    return this;
+};
+
+
 const shopModel = mongoose.model('Shop', shopSchema);
 
 module.exports = shopModel;

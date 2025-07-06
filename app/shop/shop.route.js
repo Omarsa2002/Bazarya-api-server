@@ -7,17 +7,16 @@ const validators = require('./shop.validation.js')
 const {myMullter, HME, validateFileTypes} = require('../utils/multer.js')
 const auth = require("../middleware/authentcation.js");
 
-/**
- * 
- *  get all shops
- */
+
 
 router.get('/all-shops', shopRoute.getAllShops);
-router.get('/:shopId', shopRoute.getAllShops);
+router.get('/:shopId', shopRoute.getShop);
 router.put('/update-shop', auth.requireShop, myMullter().fields([
     {name:"businessLicenseImage", maxCount:1},
     {name:"profileImage", maxCount:1}
-]), HME, validateFileTypes, shopRoute.upateShop);
+]), HME, validateFileTypes, shopRoute.updateShop);
+
+router.delete("/delete-shop", auth.requireShop, shopRoute.deleteShop)
 
 
 
