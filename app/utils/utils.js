@@ -79,6 +79,17 @@ function deleteFileFromImageKit(fileId) {
     });
 }
 
+async function deleteFolder(folderPath) {
+    try {
+        const result = await imageKit.deleteFolder(folderPath);
+        console.log('Folder deleted successfully:', result);
+        return result;
+    } catch (error) {
+        console.error('Error deleting folder:', error);
+        throw error;
+    }
+}
+
 /**
  * Deletes multiple files from ImageKit.io in a single batch operation.
  * @param {string[]} fileIdsArray - An array of unique file IDs to delete.
@@ -299,6 +310,7 @@ const currentDate = (inputDate) => {
 module.exports = {
     uploadFileToImageKit,
     deleteFileFromImageKit,
+    deleteFolder,
     bulkDeleteFilesFromImageKit,
     updateFileDetailsInImageKit,
     replaceFileByDeleteAndUpload,

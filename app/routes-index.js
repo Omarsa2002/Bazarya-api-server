@@ -5,5 +5,6 @@ module.exports = {
         app.use('/api/v1/shop', require('./shop/shop.route'));
         app.use('/api/v1/category', require('./category/category.route'));
         app.use('/api/v1/sub-category', require('./subCategory/sub.category.route'));
+        app.use('/api/v1/brand', require('./brand/brand.route'));
     }
 };

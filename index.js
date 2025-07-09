@@ -74,7 +74,8 @@ app.use(function(req, res, next) {
         '/common/uploadFile',
         /^\/api\/v1\/auth\/signup-shop$/,  // Regex to match '/api/v1/.../....'
         /^\/api\/v1\/shop\/update-shop$/,  // Regex to match '/api/v1/.../....'
-        ///^\/api\/v1\/shop\/update-shop\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
+        /^\/api\/v1\/brand\/create-brand$/,  // Regex to match '/api/v1/.../....'
+        /^\/api\/v1\/brand\/update-brand\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
     ];
     // Check if the path matches any form-data path
     const isFormDataPath = formDataPaths.some((formDataPath) => {

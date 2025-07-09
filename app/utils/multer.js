@@ -60,48 +60,56 @@ function myMullter() {
     return upload;
 }
 
+const checkFile = async (req, res, file)=>{
+    if (!file.buffer || file.buffer.length === 0) {
+        return sendResponse(res, RESPONSE_BAD_REQUEST, `File ${file.originalname} is empty`, {}, []);
+    }
+    try {
+        // Use magic bytes to detect real file type
+        const detected = await fileType.fileTypeFromBuffer(file.buffer);
+        
+        if (!detected) {
+            return sendResponse(res, RESPONSE_BAD_REQUEST, `Cannot determine file type for ${file.originalname}`, {}, []);
+        }
+        const realMimeType = detected.mime;
+        console.log(`File ${file.originalname}: Real type = ${realMimeType}, Client type = ${file.mimetype}`);
+        // Validate against allowed types
+        const isValidImage = imageMimeTypes.includes(realMimeType);
+        const isValidFile = fileMimeTypes.includes(realMimeType);
+        const isValidVideo = videosMimeTypes.includes(realMimeType);
+        if (!isValidImage && !isValidFile && !isValidVideo) {
+            return sendResponse(res, RESPONSE_BAD_REQUEST, 
+                `Invalid file type for ${file.originalname}. Detected: ${realMimeType}. Only images, PDFs, and documents are allowed.`, 
+                {}, []
+            );
+        }
+        // Optional: Check if client-provided mimetype matches real mimetype
+        if (file.mimetype !== realMimeType) {
+            console.warn(`Mimetype mismatch for ${file.originalname}: Client=${file.mimetype}, Real=${realMimeType}`);
+            // You can choose to reject or just log the warning
+        }
+    } catch (typeError) {
+        console.error('File type detection error:', typeError);
+        return sendResponse(res, RESPONSE_BAD_REQUEST, `Error validating file ${file.originalname}: ${typeError.message}`, {}, []);
+    }
+}
+
 const validateFileTypes = async (req, res, next) => {
     try {
-        if (!req.files) {
+        if (!req.files||!req.file) {
             return next();
         }
-        // Validate each uploaded file using magic bytes
-        for (const fieldName in req.files) {
-            const files = req.files[fieldName];
-            
-            for (const file of files) {
-                if (!file.buffer || file.buffer.length === 0) {
-                    return sendResponse(res, RESPONSE_BAD_REQUEST, `File ${file.originalname} is empty`, {}, []);
-                }
-                try {
-                    // Use magic bytes to detect real file type
-                    const detected = await fileType.fileTypeFromBuffer(file.buffer);
-                    
-                    if (!detected) {
-                        return sendResponse(res, RESPONSE_BAD_REQUEST, `Cannot determine file type for ${file.originalname}`, {}, []);
-                    }
-                    const realMimeType = detected.mime;
-                    console.log(`File ${file.originalname}: Real type = ${realMimeType}, Client type = ${file.mimetype}`);
-                    // Validate against allowed types
-                    const isValidImage = imageMimeTypes.includes(realMimeType);
-                    const isValidFile = fileMimeTypes.includes(realMimeType);
-                    const isValidVideo = videosMimeTypes.includes(realMimeType);
-                    if (!isValidImage && !isValidFile && !isValidVideo) {
-                        return sendResponse(res, RESPONSE_BAD_REQUEST, 
-                            `Invalid file type for ${file.originalname}. Detected: ${realMimeType}. Only images, PDFs, and documents are allowed.`, 
-                            {}, []
-                        );
-                    }
-                    // Optional: Check if client-provided mimetype matches real mimetype
-                    if (file.mimetype !== realMimeType) {
-                        console.warn(`Mimetype mismatch for ${file.originalname}: Client=${file.mimetype}, Real=${realMimeType}`);
-                        // You can choose to reject or just log the warning
-                    }
-                } catch (typeError) {
-                    console.error('File type detection error:', typeError);
-                    return sendResponse(res, RESPONSE_BAD_REQUEST, `Error validating file ${file.originalname}`, {}, []);
+        if(req.files){
+            for (const fieldName in req.files) {
+                const files = req.files[fieldName];
+                
+                for (const file of files) {
+                    await checkFile(req, res, file);
                 }
             }
+        }else{
+            const file = req.file
+            await checkFile(req, res, file);
         }
         next();
     } catch (error) {
