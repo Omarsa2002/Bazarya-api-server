@@ -12,6 +12,7 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:true,
         unique: [true, 'product name must be unique'],
+        trim: true,
         min: [2, 'minimum length 2 char'],
         max: [20, 'max length 2 char'],
     },
@@ -20,18 +21,15 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    subCategories:[String],
     productDescription:{
         type:String,
     },
-    image: ImageSchema,
-
-    video: VideoSchema,
-
+    productImages: [ImageSchema],
     amount:{
         type:Number,
         default:0
     },
-
     stock: {
         type: Number,
         default: 0
@@ -40,22 +38,18 @@ const productSchema=new mongoose.Schema({
         type: Number,
         default: 0
     },
-
     price:{
         type:Number,
         default:0
     },
-
     finalPrice:{
         type:Number,
         default:0
     },
-
     discount:{
         type:Number,
         default:0
     },
-
     colors: {
         type: [String],
     },
@@ -72,7 +66,7 @@ const productSchema=new mongoose.Schema({
         default:0
     },
     reviewId:{
-        type:String
+        type:[String]
     },
     createdBy: {
         type: String,
@@ -90,6 +84,42 @@ const productSchema=new mongoose.Schema({
 )
 
 productSchema.plugin(addPrefixedIdPlugin, { prefix: 'Product', field: 'productId' })
+
+productSchema.methods.addProductImages = function(result) {
+    if (!Array.isArray(result)) {
+        throw new Error('Result must be an array');
+    }
+    if (!result.length) {
+        throw new Error('No images provided to add');
+    }
+    // Validate each image object
+    const validImages = result.filter(element => {
+        if (!element || typeof element !== 'object') {
+            console.warn('Skipping invalid image object:', element);
+            return false;
+        }
+        if (!element.fileId || !element.url || !element.name) {
+            console.warn('Skipping image with missing properties:', element);
+            return false;
+        }
+        return true;
+    });
+    
+    if (!validImages.length) {
+        throw new Error('No valid images found in the provided result');
+    }
+    if (!this.productImages) {
+        this.productImages = [];
+    }
+    const newImages = validImages.map(element => ({
+        imageId: element.fileId,
+        imageURL: element.url,
+        imageName: element.name
+    }));
+    this.productImages.push(...newImages);
+    return this;
+};
+
 
 //if you are going to use aggregate it is not neccssary to make population here
 

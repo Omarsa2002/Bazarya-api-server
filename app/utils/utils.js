@@ -81,6 +81,7 @@ function deleteFileFromImageKit(fileId) {
 
 async function deleteFolder(folderPath) {
     try {
+        folderPath = validateAndFormatFolder(folderPath);
         const result = await imageKit.deleteFolder(folderPath);
         console.log('Folder deleted successfully:', result);
         return result;

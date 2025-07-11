@@ -49,13 +49,6 @@ const allowedOrigin = (origin, callback)=>{
 
 app.use(cors({
     origin: allowedOrigin,
-    // origin:(origin, callback)=>{
-    //     console.log("origin------> ",origin, whitelist, whitelist.includes(origin)); 
-    //     if (whitelist.includes(origin)){
-    //         return callback(null, true)
-    //     }
-    //     return callback(new Error("not allowed origin"), null)
-    // },
     credentials: true,
 }));
 
@@ -75,7 +68,9 @@ app.use(function(req, res, next) {
         /^\/api\/v1\/auth\/signup-shop$/,  // Regex to match '/api/v1/.../....'
         /^\/api\/v1\/shop\/update-shop$/,  // Regex to match '/api/v1/.../....'
         /^\/api\/v1\/brand\/create-brand$/,  // Regex to match '/api/v1/.../....'
-        /^\/api\/v1\/brand\/update-brand\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
+        /^\/api\/v1\/brand\/update-brand\/[^\/]+$/,  // Regex to match '/api/v1/.../..../...'
+        /^\/api\/v1\/product\/create-product$/,  // Regex to match '/api/v1/.../....'
+        /^\/api\/v1\/product\/update-product\/[^\/]+$/  // Regex to match '/api/v1/.../..../...'
     ];
     // Check if the path matches any form-data path
     const isFormDataPath = formDataPaths.some((formDataPath) => {

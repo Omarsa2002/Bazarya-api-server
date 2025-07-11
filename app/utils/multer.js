@@ -96,15 +96,21 @@ const checkFile = async (req, res, file)=>{
 
 const validateFileTypes = async (req, res, next) => {
     try {
-        if (!req.files||!req.file) {
+        if (!req.files&&!req.file) {
             return next();
         }
         if(req.files){
-            for (const fieldName in req.files) {
-                const files = req.files[fieldName];
-                
-                for (const file of files) {
+            if(Array.isArray(req.files)){
+                const files = req.files
+                files.forEach(async file => {
                     await checkFile(req, res, file);
+                });
+            }else{
+                for (const fieldName in req.files) {
+                    const files = req.files[fieldName];
+                    for (const file of files) {
+                        await checkFile(req, res, file);
+                    }
                 }
             }
         }else{
