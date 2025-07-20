@@ -30,7 +30,7 @@ const reviewSchema=new mongoose.Schema({
     timestamps:true
 })
 
-productSchema.plugin(addPrefixedIdPlugin, { prefix: 'Review', field: 'reviewId' })
+reviewSchema.plugin(addPrefixedIdPlugin, { prefix: 'Review', field: 'reviewId' })
 
 const reviewModel=mongoose.model("Review",reviewSchema)
 

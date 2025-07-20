@@ -149,11 +149,11 @@ const limiter = rateLimit({
         if (req.user && req.user.role === 'admin') {
             return 1000; // Allow 1000 requests for admins
         } else {
-            return 10; // Allow 10 requests for regular users
+            return 20; // Allow 10 requests for regular users
         }
     },
     handler: (req, res) => {
-        sendResponse(res,constants.RESPONSE_TOO_MANY_REQUESTS,'You have exceeded the 10 requests in 5 minutes limit!',{},[])
+        sendResponse(res,constants.RESPONSE_TOO_MANY_REQUESTS,'You have exceeded the 20 requests in 5 minutes limit!',{},[])
     }
 })
 

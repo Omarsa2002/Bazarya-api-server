@@ -7,33 +7,25 @@ const orderSchema=new mongoose.Schema({
     userId: String,
     shopId: String,
     status: {
-        type:String,
-        enum: [ 'prepare', 'in way', 'delivered' ],
-        default:"prepare"
-    },
-    products: [
-        {
-            productId: String,
-            name: String,
-            quantity: Number,
-            price: Number,
-        }
-    ],
-    totalAmount: {
-        type: Number,
-        required: true
-    },
-    paymentMethod: {
         type: String,
-        enum: ['cod', 'card'],
-        default: 'cod'
+        enum: ['confirmed', 'preparing', 'shipped', 'delivered', 'cancelled'],
+        default: 'confirmed'
     },
-    deliveryAddress: {
-        type: AddressSchema
-    },
-    deliveryFee: {
-        type: Number,
-        default: 0
+    products: [{
+        productId: String,
+        name: String,
+        quantity: Number,
+        price: Number,
+        priceAtTime: Number // Store price at time of order
+    }],
+    totalAmount: Number,
+    deliveryAddress: AddressSchema,
+    deliveryFee: Number,
+    paymentMethod: String,
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'failed', 'refunded'],
+        default: 'pending'
     },
     deliveredAt: Date,
 },{
@@ -44,6 +36,6 @@ const orderSchema=new mongoose.Schema({
 
 orderSchema.plugin(addPrefixedIdPlugin, { prefix: 'Order', field: 'orderId' });
 
-const orderModel=mongoose.model("order",orderSchema)
+const orderModel=mongoose.model("Order",orderSchema)
 
 module.exports=orderModel

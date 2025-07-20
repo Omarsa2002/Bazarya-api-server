@@ -37,6 +37,10 @@ const shopSchema=new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    deliveryFee: {
+        type:Number,
+        default: 0
+    },
     isFeatured: {
         type: Boolean,
         default: false,
