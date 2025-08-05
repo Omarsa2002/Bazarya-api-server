@@ -8,12 +8,13 @@ const auth = require("../middleware/authentcation.js");
 
 
 
-router.get('/:orderId', auth.requireAny, validation(validators), orderRoute);
-router.get('/:userId/orders', auth.requireUserOrAdmin, validation(validators), orderRoute);
-router.get('/:shopId/orders', auth.requireAdminOrShop, validation(validators), orderRoute);
-router.post('/create-order', auth.requireUserOrAdmin, validation(validators), orderRoute);
-router.put('/update-order/:orderId', auth.requireUserOrAdmin, validation(validators), orderRoute);
-router.delete("/delete-order/:orderId", auth.requireUserOrAdmin, validation(validators), orderRoute)
+router.get('/:orderId', auth.requireAny, validation(validators), orderRoute.getOrder);
+router.get('/:userId/orders', auth.requireUserOrAdmin, validation(validators), orderRoute.getAllUserOrders);
+router.get('/:shopId/orders', auth.requireAdminOrShop, validation(validators), orderRoute.getAllShopoOrders);
+router.post('/create-order', auth.requireUser, validation(validators), orderRoute.createOrderFromCart);
+router.put('/cancel-order/:orderId', auth.requireUser, validation(validators), orderRoute.cancelOrder);
+router.put('/refund-request/:orderId', auth.requireUser, validation(validators), orderRoute.refundRequest);
+
 
 
 

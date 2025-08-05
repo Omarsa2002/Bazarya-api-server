@@ -8,25 +8,63 @@ const orderSchema=new mongoose.Schema({
     shopId: String,
     status: {
         type: String,
-        enum: ['confirmed', 'preparing', 'shipped', 'delivered', 'cancelled'],
-        default: 'confirmed'
+        enum: ['pending_payment', 'payment_failed', 'confirmed', 'refunded', 'partially_refunded', 'preparing', 'shipped', 'delivered', 'cancelled'],
+        default: 'pending_payment'
     },
     products: [{
         productId: String,
         name: String,
         quantity: Number,
-        price: Number,
-        priceAtTime: Number // Store price at time of order
+        unitPrice: Number,
+        totalPrice: Number
     }],
+    subtotal: Number,
+    deliveryFee: Number,
     totalAmount: Number,
     deliveryAddress: AddressSchema,
-    deliveryFee: Number,
-    paymentMethod: String,
+    paymentMethod: {
+        type: String,
+        enum: ['card', 'wallet', 'vodafone_cash', 'orange_cash', 'etisalat_cash', 'cash'],
+        required: true,
+        default: 'card'
+    },
     paymentStatus: {
         type: String,
-        enum: ['pending', 'completed', 'failed', 'refunded'],
+        enum: ['pending', 'processing', 'completed', 'failed', 'refunded', 'partially_refunded', 'cancelled'],
         default: 'pending'
     },
+    refundStatus:{
+        type: String,
+        enum: ['pending', 'processing', 'accepted', 'rejected', 'non'],
+        default: 'non'
+    },
+    refundReason: {
+        type: String,
+        default: 'non'
+    },
+    refundedProducts: [{
+        productId: String,
+        name: String,
+        quantity: Number,
+        unitPrice: Number,
+        refundAmount: Number
+    }],
+    paymobOrderId: Number, // Paymob order ID
+    paymobTransactionId: Number, // Paymob transaction ID
+    lastWebhookSignature: String,
+    failureReason: String,
+    paymentToken: String, // Paymob payment token
+    paymentAttempts: { type: Number, default: 0 },
+    paymentExpiresAt: Date,
+    paidAt: Date,
+    canceledAt: Date,
+    refundedAt: Date,
+    lastRefundAt: Date,
+    refundRequestedAt: Date,
+    refundAmount: Number,
+    transactionHistory: [Object],
+    reservedUntil: Date,
+    delivered: Boolean,
     deliveredAt: Date,
 },{
     timestamps:true,

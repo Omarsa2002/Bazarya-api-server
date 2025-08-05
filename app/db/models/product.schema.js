@@ -34,6 +34,10 @@ const productSchema=new mongoose.Schema({
         type: Number,
         default: 0
     },
+    reservedStock: {
+        type: Number,
+        default: 0
+    },
     soldItems: {
         type: Number,
         default: 0

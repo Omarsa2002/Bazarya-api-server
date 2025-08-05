@@ -100,8 +100,8 @@ const randomNumber=()=>{
 module.exports.randomNumber=randomNumber;
 
 const validateExpiry = (inputDate,dateType,expireTime) => {
-    let diffHours = moment().diff(moment(inputDate), `${dateType}`, true);
-    return diffHours <= expireTime;
+    let diff = moment().diff(moment(inputDate), `${dateType}`, true);
+    return diff <= expireTime;
 }
 module.exports.validateExpiry = validateExpiry;
 
